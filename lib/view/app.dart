@@ -17,8 +17,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: ChangeNotifierProvider<PostChangeNotifier>(
-        create: (context) => PostChangeNotifier(),
-        child: PostView(),
+        create: (context) => PostChangeNotifier()..getPostList(),
+        child: const PostView(),
       ),
     );
   }

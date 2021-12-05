@@ -1,3 +1,4 @@
+import 'package:dio_and_provider_example/providers/auth_change_notifier.dart';
 import 'package:dio_and_provider_example/providers/post_change_notifier.dart';
 import 'package:dio_and_provider_example/view/pages/post_view/widgets/customer_card.dart';
 import 'package:dio_and_provider_example/view/pages/post_view/widgets/customer_textfield.dart';
@@ -8,39 +9,49 @@ class PostView extends StatelessWidget {
   const PostView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    var list = Provider.of<PostChangeNotifier>(context);
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: [
-          CustomerField(
-            onChanged: (value) {},
-          ),
-          Consumer<PostChangeNotifier>(
-            builder: (context, value, child) {
-              if (value.isProgress) {
-                return const Center(child: CircularProgressIndicator());
-              }
+    return ChangeNotifierProvider<PostChangeNotifier>(
+      create: (context) => PostChangeNotifier()..getPostList(),
+      child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+              onPressed: () {
+                context.read<AuthChangeNotifier>().setExit();
+              },
+              icon: const Icon(Icons.exit_to_app),
+            )
+          ],
+        ),
+        body: Column(
+          children: [
+            CustomerField(
+              onChanged: (value) {},
+            ),
+            Consumer<PostChangeNotifier>(
+              builder: (context, value, child) {
+                if (value.isProgress) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              return Expanded(
-                child:  Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListView.builder(
-                  itemCount: value.list.length,
-                  itemBuilder: (context, index) {
-                    
-                    return CustomerCard(
-                        userId: value.list[index].userId.toString(),
-                        id: value.list[index].id.toString(),
-                        title: value.list[index].title.toString(),
-                        body: value.list[index].body.toString());
-                  },
-              ),
-                ),
-              );
-            },
-          )
-        ],
+                return Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.builder(
+                      itemCount: value.list.length,
+                      itemBuilder: (context, index) {
+                        return CustomerCard(
+                            userId: value.list[index].userId.toString(),
+                            id: value.list[index].id.toString(),
+                            title: value.list[index].title.toString(),
+                            body: value.list[index].body.toString());
+                      },
+                    ),
+                  ),
+                );
+              },
+            )
+          ],
+        ),
       ),
     );
   }
